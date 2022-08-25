@@ -1,7 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import axios from "axios";
+import useSWR from "swr";
 
 const ProductList = () => {
+
+  const fetcher = async () => {
+    const response = await axios.get('http://localhost:5000/product');
+    return response.data;
+  }
+
+  const {data} = useSWR('product', fetcher);
+  if(!data) return <h2>Loading...</h2>;
+
   return (
     <div className="flex flex-col mt-5">
       <div className="w-full">
@@ -23,12 +34,16 @@ const ProductList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr className="bg-white border-b">
-                        <td className="py-3 px-1 text-center"></td>
-                        <td className="py-3 px-6 font-medium text-gray-900">Product 1</td>
-                        <td className="py-3 px-6">2456</td>
+                  {data.map((product, index) => (
+                    <tr className="bg-white border-b" key={product.id}>
                         <td className="py-3 px-1 text-center">
-                          <Link to={`/edit/`}
+                          {index+1}</td>
+                        <td className="py-3 px-6 font-medium text-gray-900">
+                          {product.name}</td>
+                        <td className="py-3 px-6">
+                          {product.price}</td>
+                        <td className="py-3 px-1 text-center">
+                          <Link to={`/edit/${product.id}`}
                             className="font-medium bg-blue-400 hover:bg-blue-600 
                             text-white py-1 px-4 rounded mr-1">Edit</Link>
                             <button to="/edit"  
@@ -36,6 +51,7 @@ const ProductList = () => {
                             text-white py-1 px-4 rounded">delete</button>
                         </td>
                     </tr>
+                  ))}
                 </tbody>
             </table>
         </div>
