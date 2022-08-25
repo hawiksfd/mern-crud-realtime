@@ -1,9 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import useSWR from "swr";
+import useSWR, {useSWRConfig} from "swr";
 
 const ProductList = () => {
+
+  const { mutate } = useSWRConfig()
 
   const fetcher = async () => {
     const response = await axios.get('http://localhost:5000/product');
@@ -12,6 +14,11 @@ const ProductList = () => {
 
   const {data} = useSWR('product', fetcher);
   if(!data) return <h2>Loading...</h2>;
+
+  const deleteProduct = async (productId) => {
+    await axios.delete(`http://localhost:5000/product/${productId}`);
+    mutate("product");
+  }
 
   return (
     <div className="flex flex-col mt-5">
@@ -46,7 +53,7 @@ const ProductList = () => {
                           <Link to={`/edit/${product.id}`}
                             className="font-medium bg-blue-400 hover:bg-blue-600 
                             text-white py-1 px-4 rounded mr-1">Edit</Link>
-                            <button to="/edit"  
+                          <button onClick={()=> deleteProduct(product.id)} to="/edit"  
                             className="font-medium bg-red-400 hover:bg-red-600 
                             text-white py-1 px-4 rounded">delete</button>
                         </td>
