@@ -1,7 +1,14 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProductList from "./components/ProductList";
+
 function App() {
   return (
     <div className="container">
-      <h1 className="text-3xl font-bold underline">Hallo from app js</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<ProductList />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
